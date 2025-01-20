@@ -67,3 +67,23 @@ body {
     opacity: 1;
   }
 }
+.suggestions-list {
+  border: 1px solid #ccc;
+  max-height: 200px;
+  width: 100%; /* Or set your desired width */
+  overflow-y: auto;
+  position: absolute;
+  background-color: white;
+  display: none; /* Hidden by default */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.suggestions-list div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestions-list div:hover {
+  background-color: #f0f0f0;
+}

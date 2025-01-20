@@ -1,6 +1,6 @@
-// Your valid API key
-const apiKey = "22c7b1ebfc72916dd3a17b037195b20d";
+const apiKey = "22c7b1ebfc72916dd3a17b037195b20d"; // Your valid API key
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather";
+const geoApiUrl = "https://api.openweathermap.org/data/2.5/find"; // Geocoding API for city suggestions
 
 // Elements
 const locationInput = document.getElementById("locationInput");
@@ -10,12 +10,7 @@ const temperatureElement = document.getElementById("temperature");
 const descriptionElement = document.getElementById("description");
 const weatherIconElement = document.getElementById("weather-icon");
 const recentSearchesElement = document.getElementById("search-list");
-
-// On page load, fetch weather automatically based on user location
-document.addEventListener("DOMContentLoaded", () => {
-  fetchWeatherByGeolocation();
-  displayRecentSearches();
-});
+const suggestionsElement = document.getElementById("suggestions"); // Suggestion container
 
 // Event listener for the search button
 searchButton.addEventListener("click", async () => {
@@ -26,6 +21,46 @@ searchButton.addEventListener("click", async () => {
   }
 });
 
+// Listen to the input event on the location input field for auto-complete
+locationInput.addEventListener("input", async () => {
+  const query = locationInput.value;
+  if (query.length > 1) {
+    await fetchSuggestions(query); // Fetch suggestions when user types more than 2 characters
+  } else {
+    suggestionsElement.style.display = "none"; // Hide suggestions if input is short
+  }
+});
+
+// Fetch city suggestions based on input query
+async function fetchSuggestions(query) {
+  const url = `${geoApiUrl}?q=${query}&appid=${apiKey}&cnt=5`; // Fetch max 5 suggestions
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Show suggestions only if we have results
+    if (data.list && data.list.length > 0) {
+      suggestionsElement.innerHTML = ""; // Clear previous suggestions
+      data.list.forEach((city) => {
+        const div = document.createElement("div");
+        div.textContent = city.name + ", " + city.sys.country;
+        div.addEventListener("click", () => {
+          locationInput.value = div.textContent;
+          fetchWeather(city.name); // Fetch weather for the selected city
+          suggestionsElement.style.display = "none"; // Hide suggestions after selection
+        });
+        suggestionsElement.appendChild(div);
+      });
+      suggestionsElement.style.display = "block"; // Show suggestions
+    } else {
+      suggestionsElement.style.display = "none"; // Hide if no results
+    }
+  } catch (error) {
+    console.error("Error fetching city suggestions:", error);
+    suggestionsElement.style.display = "none"; // Hide suggestions if error occurs
+  }
+}
+
 // Fetch weather data based on city name
 async function fetchWeather(location) {
   const url = `${apiUrl}?q=${location}&appid=${apiKey}&units=metric`; // Add units=metric for Celsius
@@ -33,44 +68,11 @@ async function fetchWeather(location) {
     const response = await fetch(url);
     if (!response.ok) throw new Error("City not found or invalid API request");
     const data = await response.json();
-    // Update the UI
     updateUI(data);
     setBackground(data.weather[0].main);
-    sayWeather(data); // Announce weather details
   } catch (error) {
     console.error("Error fetching weather data:", error);
     alert("Failed to fetch weather data. Please check the city name.");
-  }
-}
-
-// Automatically fetch weather based on user's geolocation
-function fetchWeatherByGeolocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        const url = `${apiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-        try {
-          const response = await fetch(url);
-          if (!response.ok)
-            throw new Error("Failed to fetch weather by location");
-          const data = await response.json();
-          updateUI(data);
-          setBackground(data.weather[0].main);
-          sayWeather(data); // Announce weather details
-        } catch (error) {
-          console.error("Error fetching weather by geolocation:", error);
-          alert("Could not fetch weather by location.");
-        }
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        alert("Unable to fetch location. Please search manually.");
-      }
-    );
-  } else {
-    alert("Geolocation is not supported by your browser.");
   }
 }
 
@@ -80,8 +82,6 @@ function updateUI(data) {
   temperatureElement.textContent = `${Math.round(data.main.temp)}°C`;
   descriptionElement.textContent = data.weather[0].description;
   weatherIconElement.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
-
-  // Add animation effect
   document.body.classList.add("animate");
   setTimeout(() => {
     document.body.classList.remove("animate");
@@ -140,12 +140,7 @@ function displayRecentSearches() {
   });
 }
 
-// Announce weather details using Web Speech API
-function sayWeather(data) {
-  const message = `The weather in ${data.name} is ${
-    data.weather[0].description
-  } with a temperature of ${Math.round(data.main.temp)} degrees Celsius.`;
-  const speech = new SpeechSynthesisUtterance(message);
-  speech.lang = "en-US";
-  window.speechSynthesis.speak(speech);
-}
+// Display recent searches on page load
+document.addEventListener("DOMContentLoaded", () => {
+  displayRecentSearches();
+});

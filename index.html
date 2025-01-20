@@ -9,8 +9,12 @@
   <body>
     <div id="weather-dashboard">
       <h1>Weather Dashboards</h1>
-      <input type="text" id="locationInput" placeholder="Enter city" />
+      <input type="text" id="locationInput" placeholder="Enter a city name" />
       <button id="searchButton">Search</button>
+
+      <!-- Auto-complete suggestions -->
+      <div id="suggestions" class="suggestions-list"></div>
+
       <div id="weather-info">
         <h2 id="location"></h2>
         <p id="temperature"></p>
