@@ -1,0 +1,69 @@
+/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  transition: background 0.5s ease-in-out;
+}
+
+#weather-dashboard {
+  text-align: center;
+  margin: 50px;
+}
+
+#locationInput {
+  padding: 10px;
+  margin-right: 10px;
+}
+
+#searchButton {
+  padding: 10px 20px;
+}
+
+#weather-info {
+  margin-top: 20px;
+}
+
+#recent-searches {
+  margin-top: 30px;
+}
+
+#search-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#search-list li {
+  cursor: pointer;
+}
+
+.sunny {
+  background-color: #ffbb33;
+  color: white;
+}
+
+.rainy {
+  background-color: #4e73df;
+  color: white;
+}
+
+.cloudy {
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.snowy {
+  background-color: #c4e0f7;
+  color: black;
+}
+
+.animate {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

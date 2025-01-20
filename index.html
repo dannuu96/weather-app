@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="weather-dashboard">
+      <h1>Weather Dashboards</h1>
+      <input type="text" id="locationInput" placeholder="Enter city" />
+      <button id="searchButton">Search</button>
+      <div id="weather-info">
+        <h2 id="location"></h2>
+        <p id="temperature"></p>
+        <p id="description"></p>
+        <img id="weather-icon" src="" alt="Weather Icon" />
+      </div>
+      <div id="recent-searches">
+        <h3>Recent Searches</h3>
+        <ul id="search-list"></ul>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
